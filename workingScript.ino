@@ -207,6 +207,18 @@ void loop() {
     client.println("allumer la led 7 <a href=\"/led7\">led 7</a></br>");
     client.println("allumer la led 8 <a href=\"/led8\">led 8</a></br>");
 
+    for(int i = 1;i<30;i++){
+    
+    String url = "allumer la led";
+    url.concat(i);
+    url.concat("<a href=\"/led");
+    url.concat(i);
+    url.concat("\">led");
+    url.concat(i);
+    url.concat("</a></br>");
+
+    client.println(url);
+    }
   }
 
   Serial.println("led 1 ");
