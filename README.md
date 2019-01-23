@@ -2,10 +2,10 @@
 
 Nous sommes l'équipe 8 qui est composé de 4 participants:
 
-SAINT GEORGES Robin
-SINGHATHIP John
-TONDO TWAHIRWA Kevin
-SAHRAOUI Walid
+- SAINT GEORGES Robin
+- SINGHATHIP John
+- TONDO TWAHIRWA Kevin
+- SAHRAOUI Walid
 
 Notre projet consiste à réaliser une bande LED interactive.
 Elle sera installer dans la caféteria et sera administrable via une page web.
