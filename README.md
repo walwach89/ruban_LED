@@ -7,7 +7,7 @@ Nous sommes l'équipe 8 qui est composé de 4 participants:
 - TONDO TWAHIRWA Kevin
 - SAHRAOUI Walid
 
-Notre projet consiste à réaliser une bande LED interactive.
+Notre projet consiste à réaliser une bande LED interactive.\0
 Elle sera installer dans la caféteria et sera administrable via une page web.
 
 Pour ce faire, nous avons utiliser le matériel suivant:
