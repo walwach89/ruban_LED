@@ -188,21 +188,20 @@ void loop() {
       //    client.print(" </form>");
       //    }
       //    client.println("<br>");
-
-      client.print("<input type=button onclick=window.location.href='http://");
-      client.print(WiFi.localIP());
-      client.print("/led,");
-      client.print(i); client.print(",");
-      client.print(j); client.print(",");
       String valeurColor;
-      if (ledsColors[i-1] == "") {
+      if (ledsColors[i - 1] == "") {
         valeurColor = "000000";
       }
       else {
-        valeurColor = ledsColors[i-1];
+        valeurColor = ledsColors[i - 1];
       }
-      client.print(valeurColor);
-      client.print("'; style=\"background-color:#");
+      client.print("<input id=\" ");
+      client.print(i);
+      client.print(j);
+      client.print("\" type=color onchange=\"func(");
+      client.print(i);
+      client.print(j);
+      client.print(")\" style=\"background-color:#");
       client.print(valeurColor);
       client.print("\";>");
     }
@@ -227,6 +226,12 @@ void loop() {
   client.println("</body>");
   client.println("</html>");
 
+  //Fonction javascript, recupere couleur, l'associe au bouton et appelle la page avec les bonens valeurs
+  client.print("<script>");
+  client.print(" function func(id) {");
+  client.print("alert(\"(document.getElementById(12).value).substring(1, 7))\");");
+  client.print("window.location.href=\"http://192.168.0.16/led,1,1,\"+((document.getElementById(12).value).substring(1, 7))} ");
+  client.print("</script>");
 
   Serial.println("");
   FastLED.show();
