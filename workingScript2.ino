@@ -20,11 +20,11 @@ String ledsColors[NUM_LEDS];
 String codeVersion = "Version 1.0  Aug 2016 by TonesB";
 
 // WiFi Router Login - change these to your router settings
-//const char* SSID = "ESGI";
-//const char* password = "Reseau-GES";
+const char* SSID = "ESGI";
+const char* password = "Reseau-GES";
 
-const char* SSID = "Xana";
-const char* password = "lyoko2468";
+//const char* SSID = "Xana";
+//const char* password = "lyoko2468";
 
 // Create the ESP Web Server on port 80
 WiFiServer WebServer(80);
@@ -59,6 +59,13 @@ void setup() {
   }
   Serial.println("");
   Serial.println("Connected to WiFi");
+
+
+  //  if (!MDNS.begin("esp8266")) {             // Start the mDNS responder for esp8266.local
+  //    Serial.println("Error setting up MDNS responder!");
+  //  }
+  //  Serial.println("mDNS responder started");
+
 
   // Start the Web Server
   WebServer.begin();
@@ -154,40 +161,8 @@ void loop() {
 
   for (int j = 1; j <= 5; j++) {
     for (int i = 1; i <= NUM_LEDS ; i++) {
-      //
-      //      String url = "<a href=\"/led,";
-      //      url.concat(i);
-      //      url.concat(",");
-      //      url.concat(j);
-      //      url.concat(",");
-      //      url.concat("FFFFFF");
-      //      url.concat("\"> led");
-      //      url.concat(i);
-      //      url.concat("</a>");
-      //
-      //    client.println(url);
-      //
-      //
-      //    client.print("<form action=\"http://");
-      //    client.print(WiFi.localIP());
-      //    client.print("/led1,");
-      //    client.print(i);client.print(",");
-      //    client.print(j);client.print(",");
-      //    String valeurColor;
-      //    if(ledsColors[i] == ""){
-      //       valeurColor = "000000";
-      //    }
-      //    else{
-      //      valeurColor=ledsColors[i];
-      //    }
-      //    client.print(valeurColor);
-      //    client.print("\">");
-      //    client.print(" <input type=\"submit\" value=\"led");
-      //    client.print(i);
-      //    client.print("\" /> ");
-      //    client.print(" </form>");
-      //    }
-      //    client.println("<br>");
+
+
       String valeurColor;
       if (ledsColors[i - 1] == "") {
         valeurColor = "000000";
@@ -195,29 +170,19 @@ void loop() {
       else {
         valeurColor = ledsColors[i - 1];
       }
-      client.print("<input id=\" ");
-      client.print(i);
-      client.print(j);
-      client.print("\" type=color onchange=\"func(");
-      client.print(i);
-      client.print(j);
-      client.print(")\" style=\"background-color:#");
-      client.print(valeurColor);
-      client.print("\";>");
+      String button = ("<input id=\"");
+      button.concat(i);
+      button.concat(j);
+      button.concat("\" type=color onchange=\"func(");
+      button.concat(i); button.concat(j); button.concat(","); button.concat(i); button.concat(","); button.concat(j);
+      button.concat(")\" style=\"background-color:#");
+      button.concat(valeurColor);
+      button.concat("\";>");
+      client.print(button);
+
     }
     client.print("<br>");
   }
-
-  //client.print("<form action=\"http://");
-  //client.print(WiFi.localIP());
-  //client.print("/led1,");
-  //client.print(i);client.print(",");
-  //client.print(j);client.print(",");
-  //client.print(ledsColors[i]);
-  //client.print("\">");
-  //client.print(" <input type=\"submit\" value=\"led\" /> ");
-  //client.print(" </form>");
-
   client.println("<a href=\"/reset\">RESET</a>");
 
   client.println("</br>");
@@ -228,9 +193,10 @@ void loop() {
 
   //Fonction javascript, recupere couleur, l'associe au bouton et appelle la page avec les bonens valeurs
   client.print("<script>");
-  client.print(" function func(id) {");
-  client.print("alert(\"(document.getElementById(12).value).substring(1, 7))\");");
-  client.print("window.location.href=\"http://192.168.0.16/led,1,1,\"+((document.getElementById(12).value).substring(1, 7))} ");
+  client.print(" function func(id,x,y){ ");
+  client.print("var color = (document.getElementById(id).value).substring(1, 7);");
+//  client.print("alert(color);");
+  client.print("window.location.href = \"http://10.33.254.62/led,\"+x+\",\" +y+ \",\"+color;}");
   client.print("</script>");
 
   Serial.println("");
