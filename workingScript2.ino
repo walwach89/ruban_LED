@@ -3,7 +3,7 @@
 #include <FastLED.h>
 
 // How many leds in your strip?
-#define NUM_LEDS 8
+#define NUM_LEDS 64
 
 // For led chips like Neopixels, which have a data line, ground, and power, you just
 // need to define DATA_PIN.  For led chipsets that are SPI based (four wires - data, clock,
@@ -20,8 +20,12 @@ String ledsColors[NUM_LEDS];
 String codeVersion = "Version 1.0  Aug 2016 by TonesB";
 
 // WiFi Router Login - change these to your router settings
-const char* SSID = "ESGI";
-const char* password = "Reseau-GES";
+//const char* SSID = "ESGI";
+//const char* password = "Reseau-GES";
+
+// WiFi Router Login - change these to your router settings
+const char* SSID = "ssidRobin";
+const char* password = "12345678";
 
 //const char* SSID = "Xana";
 //const char* password = "lyoko2468";
@@ -35,15 +39,12 @@ int cpt = 0;
 void setup() {
 
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
-  FastLED.setBrightness( 150 );
+  FastLED.setBrightness( 30 );
 
   Serial.begin(115200);
   delay(10);
   Serial.println();
   Serial.println();
-
-
-
 
   // Connect to WiFi network
   Serial.println();
@@ -104,13 +105,11 @@ void loop() {
   // get x, y, value from request
 
   String xVal = getValue(request, ',', 1);
-  String yVal = getValue(request, ',', 2);
-  String hexVal = getValue(request, ',', 3);
+  String hexVal = getValue(request, ',', 2);
 
   hexVal = getValue(hexVal, ' ', 0);
 
   int xvalue = xVal.toInt();
-  int yvalue = yVal.toInt();
 
 
   String value;
@@ -132,10 +131,9 @@ void loop() {
   ledsColors[xvalue - 1] = value ;
   FastLED.show();
 
-  for (int parc = 0; parc < 8; parc++) {
-    Serial.println(ledsColors[parc]);
-  }
-
+  //  for (int parc = 0; parc < 8; parc++) {
+  //    Serial.println(ledsColors[parc]);
+  //  }
 
   if (request.indexOf("/reset") != -1) {
     for (int cptReset = 0; cptReset < NUM_LEDS ; cptReset ++) {
@@ -144,7 +142,7 @@ void loop() {
     }
   }
 
-  // Return the response
+ // Return the response
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: text/html; charset=UTF-8");
   client.println("");
@@ -153,53 +151,48 @@ void loop() {
   client.println("<head>");
   client.println("<title>ESP8266 Demo</title>");
   client.println("</head>");
-  client.println("<body>");
-
-  client.println("</br></br>");
-
-  client.println("");
-
-  for (int j = 1; j <= 5; j++) {
-    for (int i = 1; i <= NUM_LEDS ; i++) {
-
-
-      String valeurColor;
-      if (ledsColors[i - 1] == "") {
-        valeurColor = "000000";
-      }
-      else {
-        valeurColor = ledsColors[i - 1];
-      }
-      String button = ("<input id=\"");
-      button.concat(i);
-      button.concat(j);
-      button.concat("\" type=color onchange=\"func(");
-      button.concat(i); button.concat(j); button.concat(","); button.concat(i); button.concat(","); button.concat(j);
-      button.concat(")\" style=\"background-color:#");
-      button.concat(valeurColor);
-      button.concat("\";>");
-      client.print(button);
-
-    }
-    client.print("<br>");
-  }
-  client.println("<a href=\"/reset\">RESET</a>");
-
-  client.println("</br>");
-
-  client.println("</br>");
-  client.println("</body>");
-  client.println("</html>");
+client.println("<body>");
 
   //Fonction javascript, recupere couleur, l'associe au bouton et appelle la page avec les bonens valeurs
-  client.print("<script>");
-  client.print(" function func(id,x,y){ ");
-  client.print("var color = (document.getElementById(id).value).substring(1, 7);");
-//  client.print("alert(color);");
-  client.print("window.location.href = \"http://10.33.254.62/led,\"+x+\",\" +y+ \",\"+color;}");
-  client.print("</script>");
+  String fJS = (" <script> function func(id){ var color = (document.getElementById(id).value).substring(1, 7); window.location.href = \"http://192.168.43.135/led,\"+id+\",\"+color;}</script>");
+  client.println(fJS);
+  //  client.print("<script>");
+  //  client.print(" function func(id){ ");
+  //  client.print("var color = (document.getElementById(id).value).substring(1, 7);");
+  //  //  client.print("alert(color);");
+  //  client.print("window.location.href = \"http://192.168.43.135/led,\"+id+\",\"+color;}");
+  //  client.print("</script>");
 
-  Serial.println("");
+
+  int cptRow = 0;
+  for (int i = 1; i <= NUM_LEDS ; i++) {
+
+
+    String valeurColor;
+    if (ledsColors[i - 1] == "") {
+      valeurColor = "000000";
+    }
+    else {
+      valeurColor = ledsColors[i - 1];
+    }
+    String button = ("<input id=\"");
+    button.concat(i);
+    button.concat("\" type=color onchange=\"func(");
+    button.concat(i);
+    button.concat(")\" style=\"background-color:#");
+    button.concat(valeurColor);
+    button.concat("\";>");
+    client.print(button);
+    cptRow++;
+    if (cptRow > 7) {
+      client.print("<br>");
+      cptRow = 0;
+    }
+
+  }
+  String footers = ("<a href=\"/reset\">RESET</a> </br> </br> </body> </html>");
+  client.println(footers);
+
   FastLED.show();
 }
 
