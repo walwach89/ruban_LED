@@ -99,13 +99,16 @@ void loop() {
   Serial.println("la request");
   Serial.println(request);
   client.flush();
-
-
-
+int accr=0;
+for (int cptReq=1; cptReq<65; cptReq++){
   // get x, y, value from request
 
-  String xVal = getValue(request, ',', 1);
-  String hexVal = getValue(request, ',', 2);
+  String xVal = getValue(request, ',', accr);
+  Serial.println("x :"+xVal);
+  accr++;
+  String hexVal = getValue(request, ',', accr);
+  Serial.println("hexa :"+hexVal);
+  accr++;
 
   hexVal = getValue(hexVal, ' ', 0);
 
@@ -114,6 +117,7 @@ void loop() {
 
   String value;
   value = hexVal;
+  Serial.println("HEXA :"+value);
 
   String r = hexVal.substring(0, 2);
   int rInt = hexToDec(r);
@@ -125,11 +129,18 @@ void loop() {
   int bInt = hexToDec(b);
 
 
-
+  
   //Put the hex value on x y pos
-  leds[xvalue - 1].setRGB( rInt, gInt, bInt);
-  ledsColors[xvalue - 1] = value ;
+  leds[cptReq].setRGB( rInt, gInt, bInt);
+
   FastLED.show();
+}
+
+  
+
+
+
+  //
 
   //  for (int parc = 0; parc < 8; parc++) {
   //    Serial.println(ledsColors[parc]);
@@ -142,7 +153,7 @@ void loop() {
     }
   }
 
- // Return the response
+  // Return the response
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: text/html; charset=UTF-8");
   client.println("");
@@ -151,17 +162,18 @@ void loop() {
   client.println("<head>");
   client.println("<title>ESP8266 Demo</title>");
   client.println("</head>");
-client.println("<body>");
+  client.println("<body>");
 
   //Fonction javascript, recupere couleur, l'associe au bouton et appelle la page avec les bonens valeurs
-  String fJS = (" <script> function func(id){ var color = (document.getElementById(id).value).substring(1, 7); window.location.href = \"http://192.168.43.135/led,\"+id+\",\"+color;}</script>");
+  String fJS = (" <script> function func(id){ var color = (document.getElementById(id).value).substring(1, 7); window.location.href = \"http://192.168.43.135/led,\"+id+\",\"+color;}");
   client.println(fJS);
-  //  client.print("<script>");
-  //  client.print(" function func(id){ ");
-  //  client.print("var color = (document.getElementById(id).value).substring(1, 7);");
-  //  //  client.print("alert(color);");
-  //  client.print("window.location.href = \"http://192.168.43.135/led,\"+id+\",\"+color;}");
-  //  client.print("</script>");
+
+
+  client.println(" function env(){ var color ; var cpt = 0; var fullUrl=\"http://192.168.43.135/\";  console.log(cpt); console.log(fullUrl); ");
+  client.println(" while (cpt < 64){ cpt++;  color = (document.getElementById(cpt).value).substring(1, 7); ");
+  client.println(" console.log(color); fullUrl = fullUrl+cpt+\",\"+color+\",\"; console.log(fullUrl);  ");
+  client.println("window.location.href = fullUrl; }}");
+  client.println("</script>");
 
 
   int cptRow = 0;
@@ -177,9 +189,7 @@ client.println("<body>");
     }
     String button = ("<input id=\"");
     button.concat(i);
-    button.concat("\" type=color onchange=\"func(");
-    button.concat(i);
-    button.concat(")\" style=\"background-color:#");
+    button.concat("\" type=color \" style=\"background-color:#");
     button.concat(valeurColor);
     button.concat("\";>");
     client.print(button);
@@ -190,8 +200,11 @@ client.println("<body>");
     }
 
   }
+
   String footers = ("<a href=\"/reset\">RESET</a> </br> </br> </body> </html>");
   client.println(footers);
+
+  client.println("<A  onclick=\"env()\">[[ENVOYER]]</A><BR>");
 
   FastLED.show();
 }
