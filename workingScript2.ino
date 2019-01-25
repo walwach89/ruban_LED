@@ -20,12 +20,12 @@ String ledsColors[NUM_LEDS];
 String codeVersion = "Version 1.0  Aug 2016 by TonesB";
 
 // WiFi Router Login - change these to your router settings
-//const char* SSID = "ESGI";
-//const char* password = "Reseau-GES";
+const char* SSID = "ESGI";
+const char* password = "Reseau-GES";
 
 // WiFi Router Login - change these to your router settings
-const char* SSID = "ssidRobin";
-const char* password = "12345678";
+//const char* SSID = "ssidRobin";
+//const char* password = "12345678";
 
 //const char* SSID = "Xana";
 //const char* password = "lyoko2468";
@@ -169,7 +169,7 @@ for (int cptReq=1; cptReq<65; cptReq++){
   client.println(fJS);
 
 
-  client.println(" function env(){ var color ; var cpt = 0; var fullUrl=\"http://192.168.43.135/\";  console.log(cpt); console.log(fullUrl); ");
+  client.println(" function env(){ var color ; var cpt = 0; var fullUrl=\" http://10.33.254.62/\";  console.log(cpt); console.log(fullUrl); ");
   client.println(" while (cpt < 64){ cpt++;  color = (document.getElementById(cpt).value).substring(1, 7); ");
   client.println(" console.log(color); fullUrl = fullUrl+cpt+\",\"+color+\",\"; console.log(fullUrl);  ");
   client.println("window.location.href = fullUrl; }}");
@@ -206,7 +206,7 @@ for (int cptReq=1; cptReq<65; cptReq++){
 
   client.println("<A  onclick=\"env()\">[[ENVOYER]]</A><BR>");
 
-  FastLED.show();
+ 
 }
 
 
